@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <title></title>
+    <script>
+        function iniciaRequest() {
+            const url = './book.xml';
+            //Teste do Browser
+            if (window.XMLHttpRequest) {
+                //Não é MS Internet Explorer
+                obj = new XMLHttpRequest();
+                obj.onreadystatechange = resposta;
+                try {
+                    obj.open('GET', url, true);
+                    obj.send(null);
+                }
+                catch (exc) {
+                    alert('Exception: ' + exc);
+                }
+            }
+            else if (window.ActiveXObject) {
+                //É MS Internet Explorer
+                obj = new ActiveXObject('Microsoft.XMLHTTP');
+                obj.onreadystatechange = resposta;
+                obj.open('GET', url, true);
+                obj.send();
+            }
+            else {
+                alert('seu navegador não suporta ajax');
+                return;
+            }
+        }
+
+        function resposta() {
+            if (obj.readyState == 4) {
+                if (obj.status == 200) {
+                    imp = document.getElementById('saida');
+                    imp.innerHTML = '<h2>Catalogo</h1><ul>';
+                    resposta = obj.responseXML;
+                    livro = resposta.getElementsByTagName('book');
+                    titulo = resposta.getElementsByTagName('title');
+                    nomeAutor = resposta.getElementsByTagName('name');
+                    idadeAutor = resposta.getElementsByTagName('age');
+                    genero = resposta.getElementsByTagName('genre');
+                    preco = resposta.getElementsByTagName('price');
+                    data = resposta.getElementsByTagName('publish_date');
+                    descricao = resposta.getElementsByTagName('description');
+                    for (let index = 0; index < livro.length; index++) {         
+                        var valor = livro[index].textContent;
+                        if (!valor) {
+                            valor = livro[index].text;
+                        }
+                        imp.innerHTML = imp.innerHTML + '<li> <h3 style="display: inline;">' + titulo[index].textContent + '</h3></li>';
+                        imp.innerHTML = imp.innerHTML + '<p> <strong> Autor: </strong>' + nomeAutor[index].textContent +
+                             ' <strong>| Idade: </strong>' + idadeAutor[index].textContent + '</p>';
+                        imp.innerHTML = imp.innerHTML + '<p> <strong>Genero:</strong> '+genero[index].textContent+'</p>';
+                        imp.innerHTML = imp.innerHTML + '<p><strong>Valor:</strong> $'+preco[index].textContent+'</p>';
+                        imp.innerHTML = imp.innerHTML + '<p><strong>Data de Publicacao:</strong> '+data[index].textContent+'</p>';
+                        imp.innerHTML = imp.innerHTML + '<p><strong>Descricao:</strong> '+descricao[index].textContent+'</p> <br>';
+                    }
+                    imp.innerHTML = imp.innerHTML + '</ul>';
+                }
+
+            }
+        }
+
+    </script>
+</head>
+
+<body onload=iniciaRequest()>
+    <h1>------ LIVROS ------</h1>
+    <div id='saida'>
+    </div>
+</body>
+
+</html>
